@@ -1,0 +1,6 @@
+.nback-display {
+  display: flex;
+  flex-wrap: wrap;
+  width: 40%;
+  margin: 0 auto;
+}
