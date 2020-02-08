@@ -3,6 +3,7 @@ import './Button.css';
 
 function Button(props) {
   const { children, onClick } = props;
+
   return (
     <button onClick={onClick} className="nback-button">
       {children}

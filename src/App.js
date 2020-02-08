@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Display from './Display';
 import Controls from './Controls';
-import { bindCallback, of, interval } from 'rxjs';
+import { Subject, bindCallback, of, interval } from 'rxjs';
 import { bufferCount, map, switchMap, take, tap } from 'rxjs/operators';
 import './App.css';
 
@@ -50,13 +50,19 @@ class App extends Component {
     );
     lastXPositions$.subscribe();
 
-    this.positionClick$ = bindCallback(this.positionClick);
+    this.positionClick$ = this.positionClick.bind(this);
     // use Subject and onNext clicks
-    this.positionClick$().subscribe(x => console.log('pc', x));
+    // this.positionClick$().subscribe(x => console.log('pc', x));
   }
 
   positionClick() {
-    return  'click!';
+    const subject = new Subject();
+
+    subject.subscribe({
+      next: (v) => console.log(`observerA: ${v}`)
+    });
+
+    return subject.next;
   }
 
   setCell(selectedCell) {
