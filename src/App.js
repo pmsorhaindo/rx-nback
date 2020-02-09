@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
 import Display from './Display';
 import Controls from './Controls';
-import { Subject, bindCallback, of, interval } from 'rxjs';
-import { bufferCount, map, switchMap, take, tap } from 'rxjs/operators';
+import { Subject, of, interval } from 'rxjs';
+import {
+  bufferCount,
+  map,
+  switchMap,
+  take,
+  tap,
+  withLatestFrom
+} from 'rxjs/operators';
 import './App.css';
 
-const gameLength = 10;
+const gameLength = 20;
 const random = () => Math.floor(Math.random() * Math.floor(8));
 const randomSequence = (length) => Array.apply(null, {length}).map(random);
 const spaces = x => {
@@ -39,30 +46,27 @@ class App extends Component {
       selectedCell:  -1,
     };
 
+    this.buttonEventsSubject = new Subject();
+
     this.setCell = this.setCell.bind(this);
-    this.positionClick = this.positionClick.bind(this);
     const positions$ = getPositions(this.setCell);
     positions$.subscribe();
 
     const lastXPositions$ = positions$.pipe(
       bufferCount(3,1),
-      tap(x => console.log('wind', x))
     );
     lastXPositions$.subscribe();
 
-    this.positionClick$ = this.positionClick.bind(this);
-    // use Subject and onNext clicks
-    // this.positionClick$().subscribe(x => console.log('pc', x));
-  }
+    this.buttonEventsSubject.asObservable().pipe(
+      withLatestFrom(lastXPositions$),
+      map(([event, window]) => {
+        if (event === 'position' && window.length === 3 && window[0] === window[window.length - 1]) {
+          console.log('sucess!');
+        }
+      })
+    ).subscribe((e) => console.log(e));
 
-  positionClick() {
-    const subject = new Subject();
 
-    subject.subscribe({
-      next: (v) => console.log(`observerA: ${v}`)
-    });
-
-    return subject.next;
   }
 
   setCell(selectedCell) {
@@ -73,7 +77,10 @@ class App extends Component {
     return (
       <div className="App">
         <Display selectedCell={this.state.selectedCell} />
-        <Controls positionClick={ this.positionClick$ }/>
+        <Controls
+          positionClick={ (e) => this.buttonEventsSubject.next('position') }
+          letterClick= { (e) => this.buttonEventsSubject.next('letter') }
+        />
       </div>
     );
   }

@@ -3,12 +3,12 @@ import Button from './Button';
 import './Controls.css';
 
 function Controls(props) {
-  const { positionClick } = props;
+  const { letterClick, positionClick } = props;
 
   return (
     <div className="nback-controls">
       <Button onClick={positionClick}>Position Match</Button>
-      <Button>Letter Match</Button>
+      <Button onClick={letterClick}>Letter Match</Button>
     </div>
   );
 }
