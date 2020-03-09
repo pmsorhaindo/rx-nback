@@ -12,9 +12,10 @@ import {
 } from 'rxjs/operators';
 import './App.css';
 
-const gameLength = 20;
+const gameLength = 30;
 const random = () => Math.floor(Math.random() * Math.floor(8));
 const randomSequence = (length) => Array.apply(null, {length}).map(random);
+
 const spaces = x => {
   return Array.apply(null, Array(x.length)).reduce((result, value, index) => {
     result.push(x[index], -1);
